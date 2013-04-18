@@ -23,6 +23,7 @@
      <element value="plone.multilingualbehavior.interfaces.IDexterityTranslatable"/>
      <element value="collective.miscbehaviors.behavior.bodytext.IBodyText"/>
      <element value="plone.app.dexterity.behaviors.exclfromnav.IExcludeFromNavigation"/>
+     <element value="plone.app.referenceablebehavior.referenceable.IReferenceable"/>
    </property>
 
   <!-- View information -->
