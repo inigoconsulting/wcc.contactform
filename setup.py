@@ -36,6 +36,7 @@ setup(name='wcc.contactform',
           'z3c.schema',
           'plone.formwidget.captcha',
           'collective.miscbehaviors',
+          'wcc.caching'
           # -*- Extra requirements: -*-
       ],
       extras_require={

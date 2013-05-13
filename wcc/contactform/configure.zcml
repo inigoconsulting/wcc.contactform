@@ -7,12 +7,18 @@
     xmlns:grok="http://namespaces.zope.org/grok"
     xmlns:browser="http://namespaces.zope.org/browser"
     xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
+    xmlns:cache="http://namespaces.zope.org/cache"
     i18n_domain="wcc.contactform">
 
     <includeDependencies package="." />
     <grok:grok package="." />
     <i18n:registerTranslations directory="locales" />
+    <include package="z3c.caching" file="meta.zcml"/>
 
+    <cache:ruleset
+        for=".browser.contactform_view.Index"
+        ruleset="wcc.noCache"
+        />
     <include package=".behavior"/>
     <include package=".portlet"/>
 
