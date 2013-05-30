@@ -34,7 +34,7 @@ setup(name='wcc.contactform',
           'plone.app.multilingual',
           'plone.multilingualbehavior',
           'z3c.schema',
-          'plone.formwidget.captcha',
+          'collective.recaptcha',
           'collective.miscbehaviors',
           'wcc.caching'
           # -*- Extra requirements: -*-

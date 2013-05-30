@@ -1,8 +1,6 @@
 from five import grok
 from plone.directives import dexterity, form
 from wcc.contactform.content.contactform import IContactForm
-from plone.formwidget.captcha import CaptchaFieldWidget
-from plone.formwidget.captcha.validator import CaptchaValidator
 
 from z3c.schema.email import RFC822MailAddress
 from wcc.contactform import MessageFactory as _
@@ -14,6 +12,7 @@ from zope.globalrequest import getRequest
 from zope.component.hooks import getSite
 from zope.component import getMultiAdapter
 from email.Header import Header
+from Products.statusmessages.interfaces import IStatusMessage
 
 grok.templatedir('templates')
 
@@ -66,22 +65,6 @@ class IFormSchema(form.Schema):
         fields=['captcha']
     )
 
-    form.widget(captcha=CaptchaFieldWidget)
-    captcha = schema.TextLine(
-        title=u"Captcha",
-        required=True
-    )
-
-@form.validator(field=IFormSchema['captcha'])
-def validateCaptcha(value):
-    site = getSite()
-    request = getRequest()
-    if request.getURL().endswith('kss_z3cform_inline_validation'):
-        return
-
-    captcha = CaptchaValidator(site, request, None,
-            IFormSchema['captcha'], None)
-    captcha.validate(value)
 
 class Index(form.SchemaForm):
     grok.context(IContactForm)
@@ -112,6 +95,10 @@ Message
         data, errors = self.extractData()
         if errors:
             self.status = self.formErrorsMessage
+            return
+
+        if not self.context.restrictedTraverse('@@captcha').verify():
+            IStatusMessage(self.request).add(u'Invalid Captcha', type='error')
             return
         
         mailhost = self.context.MailHost

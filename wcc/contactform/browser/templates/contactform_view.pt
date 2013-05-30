@@ -20,7 +20,12 @@
 
     <div tal:content="structure context/text|nothing"></div>
 
-    <metal:block use-macro="context/ploneform-macros/form"/>
+    <metal:block use-macro="context/ploneform-macros/form">
+        <metal:block fill-slot="actions">
+            <tal:block tal:replace="structure context/@@captcha/image_tag"/>
+            <metal:block use-macro="context/ploneform-macros/actions"/>
+        </metal:block>
+    </metal:block>
 
   </metal:content-core>
 </metal:main>
