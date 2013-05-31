@@ -118,4 +118,6 @@ on the contact form at %(url)s
         mailhost.send(msg, msg['TO'], msg['FROM'],
                 subject=data['subject'], charset=self.context.email_charset)
 
-        IStatusMessage(self.request).add(u'Thank you. ')
+        IStatusMessage(self.request).add(getattr(self.context,
+        'mail_sent_message', u'Mail sent'))
+        self.request.response.redirect(self.context.absolute_url())

@@ -48,3 +48,8 @@ class IContactForm(form.Schema, IImageScaleTraversable):
         required=False,
         value_type=RFC822MailAddress()
     )
+
+    mail_sent_message = schema.TextLine(
+        title=_(u'Message to display after a successful mail send'),
+        default=u'Mail sent',
+    )
