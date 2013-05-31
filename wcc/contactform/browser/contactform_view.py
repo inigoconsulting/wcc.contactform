@@ -77,18 +77,17 @@ class Index(form.SchemaForm):
 
     template = ViewPageTemplateFile('templates/contactform_view.pt')
 
-    mail_template = '''
+    mail_template = u'''%(message)s
+
+---
+
 From: %(from_name)s <%(from_email)s>
 Country: %(country)s
 City: %(city)s
 Phone: %(phone)s
 
-Message
---------
-
-%(message)s
-
-
+You are receiving this mail because %(from_name)s is sending feedback 
+on the contact form at %(url)s
     '''
     @z3c.form.button.buttonAndHandler(_(u'Submit'), name='submit')
     def submit(self, action):
@@ -103,15 +102,20 @@ Message
         
         mailhost = self.context.MailHost
 
-        msg = message_from_string(self.mail_template % data)
-        msg.set_charset('utf-8')
+        data['url'] = self.context.absolute_url()
+        message = self.mail_template % data
+        msg = message_from_string(message.encode(self.context.email_charset))
+        msg.set_charset(self.context.email_charset)
 
-        msg['TO'] = ', '.join(self.context.emails_to)
-        msg['FROM'] = '"%s" <%s>' % (data['from_name'],data['from_email'])
+        msg['TO'] = u', '.join(self.context.emails_to)
+        msg['FROM'] = u'"%s" <%s>' % (data['from_name'],data['from_email'])
         if self.context.emails_bcc:
-            msg['BCC'] = ', '.join(self.context.emails_bcc)
+            msg['BCC'] = u', '.join(self.context.emails_bcc)
 
         if self.context.emails_cc:
-            msg['CC'] = ', '.join(self.context.emails_cc)
+            msg['CC'] = u', '.join(self.context.emails_cc)
 
-        mailhost.send(msg, subject=data['subject'])
+        mailhost.send(msg, msg['TO'], msg['FROM'],
+                subject=data['subject'], charset=self.context.email_charset)
+
+        IStatusMessage(self.request).add(u'Thank you. ')
