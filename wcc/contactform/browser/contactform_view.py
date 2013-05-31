@@ -115,8 +115,8 @@ on the contact form at %(url)s
         if self.context.emails_cc:
             msg['CC'] = u', '.join(self.context.emails_cc)
 
-        mailhost.send(msg, msg['TO'], msg['FROM'],
-                subject=data['subject'], charset=self.context.email_charset)
+        mailhost.send(msg, subject=data['subject'], 
+                charset=self.context.email_charset)
 
         IStatusMessage(self.request).add(getattr(self.context,
         'mail_sent_message', u'Mail sent'))
