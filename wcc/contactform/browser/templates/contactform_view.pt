@@ -22,7 +22,7 @@
 
     <metal:block use-macro="context/ploneform-macros/form">
         <metal:block fill-slot="actions">
-            <tal:block tal:replace="structure context/@@captcha/image_tag"/>
+            <tal:block tal:replace="structure context/@@captcha/custom_image_tag"/>
             <metal:block use-macro="context/ploneform-macros/actions"/>
         </metal:block>
     </metal:block>
