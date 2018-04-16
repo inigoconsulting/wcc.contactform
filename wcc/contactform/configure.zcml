@@ -23,5 +23,14 @@
     <include package=".portlet"/>
 
     <!-- -*- extra stuff goes here -*- -->
+    
+    <browser:page
+      name="captcha"
+      for="*"
+      class=".captcha_view.CustomRecaptchaView"
+      permission="zope.Public"
+      allowed_attributes="custom_image_tag"
+      layer=".interfaces.IProductSpecific"
+      />
 
 </configure>
