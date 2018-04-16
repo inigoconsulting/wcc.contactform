@@ -14,6 +14,12 @@ from zope.component import getMultiAdapter
 from email.Header import Header
 from Products.statusmessages.interfaces import IStatusMessage
 
+
+import urllib2
+from collective.recaptcha.settings import getRecaptchaSettings
+import json
+import urllib
+
 grok.templatedir('templates')
 
 class IFormSchema(form.Schema):
@@ -95,10 +101,36 @@ on the contact form at %(url)s
         if errors:
             self.status = self.formErrorsMessage
             return
-
-        if not self.context.restrictedTraverse('@@captcha').verify():
+        
+        if 'g-recaptcha-response' not in self.request.form.keys():
+            IStatusMessage(self.request).add(u'Captcha Error', type='error')
+            return
+        if not self.request.form['g-recaptcha-response']:
+            IStatusMessage(self.request).add(u'Missing Captcha', type='error')
+            return
+        
+        
+        settings = getRecaptchaSettings()
+        #url_ = 'https://www.google.com/recaptcha/api/siteverify?secret=%s&response=%s' % (settings.private_key, self.request.form['g-recaptcha-response'])
+        captcha_url = 'https://www.google.com/recaptcha/api/siteverify'
+        params = {'secret':settings.private_key, 'response':self.request.form['g-recaptcha-response']}
+        form_data = urllib.urlencode(params)
+        req = urllib2.Request(captcha_url, form_data)
+        http_response = urllib2.urlopen(req)
+        json_response = json.loads(http_response.read())
+        if json_response and 'success' in json_response:
+            if json_response['success'] != True:
+                IStatusMessage(self.request).add(u'Invalid Captcha', type='error')
+                return
+        else:
             IStatusMessage(self.request).add(u'Invalid Captcha', type='error')
             return
+        
+        
+        # Old code
+        # if not self.context.restrictedTraverse('@@captcha').verify():
+        #     IStatusMessage(self.request).add(u'Invalid Captcha', type='error')
+        #     return
         
         mailhost = self.context.MailHost
 
