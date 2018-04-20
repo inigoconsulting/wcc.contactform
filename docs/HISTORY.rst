@@ -1,10 +1,10 @@
 Changelog
 =========
 
-1.5 (unreleased)
+1.5 (2018-04-20)
 ----------------
 
-- Nothing changed yet.
+- re-implement recaptcha field based on v2, rendering and verification
 
 
 1.4 (2013-05-31)
